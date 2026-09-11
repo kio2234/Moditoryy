@@ -1,1035 +1,254 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <meta
-    name="description"
-    content="토리와 함께 역사 속 왜곡된 기억을 복원하는 AI 역사 추리 게임"
-  />
-
-  <title>모디토리 | 기억도서관의 시간탐정</title>
-
-  <style>
-    :root {
-      --navy-950: #111a2d;
-      --navy-900: #18243c;
-      --navy-800: #223353;
-      --blue-500: #67aee6;
-      --blue-100: #d9ecf8;
-
-      --gold-500: #c99439;
-      --gold-400: #dfb85d;
-      --gold-200: #ebd7a5;
-
-      --paper-100: #f8f1e4;
-      --paper-200: #eee1cb;
-      --paper-300: #ddc9a8;
-
-      --brown-700: #5d402b;
-      --brown-500: #816044;
-
-      --text-main: #273147;
-      --text-soft: #6b6258;
-      --white: #ffffff;
-
-      --shadow:
-        0 18px 50px rgba(27, 34, 50, 0.13);
-
-      --small-shadow:
-        0 8px 24px rgba(27, 34, 50, 0.1);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      color: var(--text-main);
-      font-family:
-        "Pretendard",
-        "Noto Sans KR",
-        "Malgun Gothic",
-        sans-serif;
-      background:
-        radial-gradient(
-          circle at 20% 10%,
-          rgba(201, 148, 57, 0.1),
-          transparent 28rem
-        ),
-        linear-gradient(
-          135deg,
-          #f9f5ec 0%,
-          var(--paper-100) 50%,
-          #eee2cd 100%
-        );
-    }
-
-    button,
-    a {
-      font: inherit;
-    }
-
-    button:focus-visible,
-    a:focus-visible {
-      outline: 3px solid var(--blue-500);
-      outline-offset: 3px;
-    }
-
-    /* 상단 메뉴 */
-
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      border-bottom: 1px solid rgba(201, 148, 57, 0.24);
-      background: rgba(248, 241, 228, 0.92);
-      backdrop-filter: blur(14px);
-    }
-
-    .header-inner {
-      width: min(1200px, calc(100% - 40px));
-      min-height: 76px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--navy-900);
-      text-decoration: none;
-    }
-
-    .brand-symbol {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--gold-400);
-      border-radius: 12px;
-      color: var(--gold-500);
-      font-family: Georgia, serif;
-      font-size: 22px;
-      font-weight: 700;
-      background: var(--navy-900);
-      box-shadow: var(--small-shadow);
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.15;
-    }
-
-    .brand-name {
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    .brand-subtitle {
-      margin-top: 4px;
-      color: var(--text-soft);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-    }
-
-    .header-nav {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .header-nav a {
-      position: relative;
-      padding: 8px 0;
-      color: var(--text-soft);
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .header-nav a::after {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      content: "";
-      background: var(--gold-500);
-      transform: scaleX(0);
-      transition: transform 0.2s ease;
-    }
-
-    .header-nav a:hover {
-      color: var(--navy-900);
-    }
-
-    .header-nav a:hover::after {
-      transform: scaleX(1);
-    }
-
-    .header-button {
-      min-height: 42px;
-      padding: 0 18px;
-      border: 1px solid var(--navy-900);
-      border-radius: 10px;
-      color: var(--paper-100);
-      font-weight: 750;
-      cursor: pointer;
-      background: var(--navy-900);
-      transition:
-        transform 0.2s ease,
-        background 0.2s ease;
-    }
-
-    .header-button:hover {
-      background: var(--navy-800);
-      transform: translateY(-1px);
-    }
-
-    /* 메인 소개 */
-
-    .hero {
-      width: min(1200px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 58px 0 50px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
-      align-items: center;
-      gap: 52px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      min-height: 34px;
-      padding: 0 14px;
-      border: 1px solid rgba(201, 148, 57, 0.38);
-      border-radius: 999px;
-      color: var(--brown-700);
-      font-size: 13px;
-      font-weight: 800;
-      background: rgba(255, 255, 255, 0.48);
-    }
-
-    .hero h1 {
-      max-width: 680px;
-      margin: 22px 0 20px;
-      color: var(--navy-900);
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: clamp(42px, 6vw, 70px);
-      line-height: 1.12;
-      letter-spacing: -0.06em;
-    }
-
-    .hero h1 span {
-      color: var(--gold-500);
-    }
-
-    .hero-description {
-      max-width: 620px;
-      margin: 0;
-      color: var(--text-soft);
-      font-size: 17px;
-      line-height: 1.85;
-      word-break: keep-all;
-    }
-
-    .hero-actions {
-      margin-top: 32px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .primary-button,
-    .secondary-button {
-      min-height: 52px;
-      padding: 0 23px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      text-decoration: none;
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-    }
-
-    .primary-button {
-      border: 1px solid var(--navy-900);
-      color: var(--white);
-      background: var(--navy-900);
-      box-shadow: var(--small-shadow);
-    }
-
-    .secondary-button {
-      border: 1px solid var(--paper-300);
-      color: var(--brown-700);
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    .primary-button:hover,
-    .secondary-button:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--small-shadow);
-    }
-
-    .hero-features {
-      margin-top: 34px;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 18px;
-      list-style: none;
-    }
-
-    .hero-features li {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-soft);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .feature-dot {
-      width: 8px;
-      height: 8px;
-      border: 2px solid var(--gold-500);
-      border-radius: 50%;
-      background: var(--paper-100);
-    }
-
-    /* 토리 이미지 영역 */
-
-    .tory-area {
-      position: relative;
-      min-height: 540px;
-      display: grid;
-      place-items: center;
-    }
-
-    .arch-background {
-      position: absolute;
-      width: min(100%, 460px);
-      height: 510px;
-      border: 1px solid rgba(201, 148, 57, 0.32);
-      border-radius: 230px 230px 28px 28px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.7),
-          rgba(238, 225, 203, 0.5)
-        );
-      box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.22);
-    }
-
-    .arch-background::before,
-    .arch-background::after {
-      position: absolute;
-      top: 24px;
-      width: 42px;
-      height: 74%;
-      content: "";
-      border-top: 1px solid rgba(201, 148, 57, 0.22);
-      border-bottom: 1px solid rgba(201, 148, 57, 0.18);
-    }
-
-    .arch-background::before {
-      left: 25px;
-      border-left: 1px solid rgba(201, 148, 57, 0.22);
-      border-radius: 30px 0 0 0;
-    }
-
-    .arch-background::after {
-      right: 25px;
-      border-right: 1px solid rgba(201, 148, 57, 0.22);
-      border-radius: 0 30px 0 0;
-    }
-
-    .tory-image {
-      position: relative;
-      z-index: 2;
-      width: min(100%, 500px);
-      max-height: 530px;
-      object-fit: contain;
-      filter: drop-shadow(0 28px 24px rgba(33, 38, 50, 0.16));
-    }
-
-    .tory-badge {
-      position: absolute;
-      right: 2%;
-      bottom: 38px;
-      z-index: 3;
-      padding: 13px 17px;
-      border: 1px solid var(--gold-400);
-      border-radius: 12px;
-      color: var(--paper-100);
-      font-size: 13px;
-      font-weight: 800;
-      background: var(--navy-900);
-      box-shadow: var(--small-shadow);
-    }
-
-    /* 챕터 소개 */
-
-    .chapter-section {
-      padding: 70px 0;
-      border-top: 1px solid rgba(201, 148, 57, 0.2);
-      border-bottom: 1px solid rgba(201, 148, 57, 0.2);
-      background:
-        linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.34),
-          rgba(238, 225, 203, 0.28)
-        );
-    }
-
-    .section-inner {
-      width: min(1200px, calc(100% - 40px));
-      margin: 0 auto;
-    }
-
-    .section-heading {
-      max-width: 700px;
-      margin-bottom: 34px;
-    }
-
-    .section-heading small {
-      color: var(--gold-500);
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-    }
-
-    .section-heading h2 {
-      margin: 10px 0 12px;
-      color: var(--navy-900);
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: clamp(30px, 4vw, 44px);
-      letter-spacing: -0.05em;
-    }
-
-    .section-heading p {
-      margin: 0;
-      color: var(--text-soft);
-      line-height: 1.75;
-    }
-
-    .chapter-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .chapter-card {
-      min-height: 210px;
-      padding: 23px 20px;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(201, 148, 57, 0.25);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.58);
-      box-shadow: 0 5px 18px rgba(40, 38, 33, 0.05);
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease;
-    }
-
-    .chapter-card:hover {
-      border-color: var(--gold-500);
-      transform: translateY(-4px);
-    }
-
-    .chapter-number {
-      color: var(--gold-500);
-      font-family: Georgia, serif;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-    }
-
-    .chapter-card h3 {
-      margin: 18px 0 8px;
-      color: var(--navy-900);
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: 19px;
-      line-height: 1.4;
-    }
-
-    .chapter-card p {
-      margin: 0 0 20px;
-      color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.65;
-    }
-
-    .chapter-era {
-      margin-top: auto;
-      color: var(--brown-500);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    /* 채팅 영역 */
-
-    .game-section {
-      padding: 76px 0 90px;
-    }
-
-    .game-header {
-      margin-bottom: 24px;
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .game-title h2 {
-      margin: 8px 0 8px;
-      color: var(--navy-900);
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: clamp(30px, 4vw, 44px);
-      letter-spacing: -0.05em;
-    }
-
-    .game-title p {
-      margin: 0;
-      color: var(--text-soft);
-      line-height: 1.7;
-    }
-
-    .energy-box {
-      min-width: 214px;
-      padding: 14px 18px;
-      border: 1px solid rgba(201, 148, 57, 0.28);
-      border-radius: 13px;
-      color: var(--text-soft);
-      font-size: 13px;
-      background: rgba(255, 255, 255, 0.44);
-    }
-
-    .energy-box strong {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--navy-900);
-      font-size: 15px;
-    }
-
-    .chat-shell {
-      position: relative;
-      overflow: hidden;
-      min-height: 720px;
-      border: 1px solid rgba(201, 148, 57, 0.35);
-      border-radius: 22px;
-      background: var(--white);
-      box-shadow: var(--shadow);
-    }
-
-    .chat-topbar {
-      min-height: 66px;
-      padding: 0 21px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      border-bottom: 1px solid rgba(201, 148, 57, 0.23);
-      color: var(--paper-100);
-      background: var(--navy-900);
-    }
-
-    .chat-agent {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .chat-avatar {
-      width: 42px;
-      height: 42px;
-      overflow: hidden;
-      border: 2px solid var(--gold-400);
-      border-radius: 50%;
-      background: var(--paper-100);
-    }
-
-    .chat-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 50% 25%;
-      transform: scale(1.55);
-    }
-
-    .chat-agent-text strong {
-      display: block;
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: 15px;
-    }
-
-    .chat-agent-text span {
-      display: block;
-      margin-top: 3px;
-      color: var(--gold-200);
-      font-size: 11px;
-    }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--gold-200);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #83c89a;
-      box-shadow: 0 0 0 4px rgba(131, 200, 154, 0.14);
-    }
-
-    .chat-frame {
-      width: 100%;
-      height: 654px;
-      display: block;
-      border: 0;
-      background: var(--white);
-    }
-
-    /* 안내 및 푸터 */
-
-    .notice {
-      margin-top: 18px;
-      padding: 14px 18px;
-      border-left: 3px solid var(--gold-500);
-      color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.7;
-      background: rgba(255, 255, 255, 0.4);
-    }
-
-    .site-footer {
-      border-top: 1px solid rgba(201, 148, 57, 0.22);
-      background: var(--navy-950);
-    }
-
-    .footer-inner {
-      width: min(1200px, calc(100% - 40px));
-      min-height: 110px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      color: rgba(255, 255, 255, 0.62);
-      font-size: 12px;
-    }
-
-    .footer-title {
-      color: var(--gold-200);
-      font-family:
-        "Noto Serif KR",
-        "Batang",
-        serif;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    /* 반응형 */
-
-    @media (max-width: 1050px) {
-      .chapter-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 850px) {
-      .header-nav {
-        display: none;
-      }
-
-      .hero {
-        padding-top: 42px;
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-
-      .hero-copy {
-        text-align: center;
-      }
-
-      .hero-description {
-        margin-right: auto;
-        margin-left: auto;
-      }
-
-      .hero-actions,
-      .hero-features {
-        justify-content: center;
-      }
-
-      .tory-area {
-        min-height: 480px;
-      }
-
-      .arch-background {
-        height: 445px;
-      }
-
-      .tory-image {
-        max-height: 470px;
-      }
-
-      .game-header {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .energy-box {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .header-inner,
-      .hero,
-      .section-inner,
-      .footer-inner {
-        width: min(100% - 24px, 1200px);
-      }
-
-      .brand-subtitle,
-      .header-button {
-        display: none;
-      }
-
-      .hero h1 {
-        font-size: 42px;
-      }
-
-      .chapter-section,
-      .game-section {
-        padding-top: 56px;
-        padding-bottom: 56px;
-      }
-
-      .chapter-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .chapter-card {
-        min-height: auto;
-      }
-
-      .chat-shell {
-        min-height: 670px;
-        border-radius: 15px;
-      }
-
-      .chat-frame {
-        height: 610px;
-      }
-
-      .chat-topbar {
-        min-height: 60px;
-        padding: 0 14px;
-      }
-
-      .status {
-        display: none;
-      }
-
-      .footer-inner {
-        padding: 24px 0;
-        align-items: flex-start;
-        flex-direction: column;
-        justify-content: center;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      *,
-      *::before,
-      *::after {
-        transition: none !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>기억도서관의 시간탐정</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Pretendard',sans-serif;
+}
+
+body{
+    background:
+    linear-gradient(rgba(20,20,40,0.75),
+    rgba(20,20,40,0.85)),
+    url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1920&q=80");
+
+    background-size:cover;
+    background-position:center;
+    min-height:100vh;
+    color:white;
+}
+
+header{
+    padding:20px 50px;
+    border-bottom:2px solid rgba(255,215,0,0.3);
+    backdrop-filter:blur(8px);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.logo img{
+    width:100px;
+}
+
+.logo-text h1{
+    color:#FFD700;
+    font-size:2.3rem;
+}
+
+.logo-text p{
+    color:#d8d8d8;
+}
+
+.hero{
+    max-width:1400px;
+    margin:auto;
+
+    padding:40px;
+
+    display:grid;
+    grid-template-columns:400px 1fr;
+    gap:40px;
+}
+
+.info-card{
+    background:rgba(255,255,255,0.08);
+    border:2px solid rgba(255,215,0,0.25);
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    padding:30px;
+}
+
+.tory{
+    width:100%;
+    max-width:280px;
+    display:block;
+    margin:auto;
+}
+
+.info-card h2{
+    margin-top:20px;
+    text-align:center;
+    color:#FFD700;
+}
+
+.info-card p{
+    margin-top:15px;
+    line-height:1.7;
+}
+
+.story-box{
+    margin-top:20px;
+    padding:15px;
+    background:rgba(0,0,0,0.25);
+    border-radius:12px;
+}
+
+.story-box h3{
+    color:#ffd46c;
+    margin-bottom:10px;
+}
+
+.chat-container{
+    background:rgba(255,255,255,0.08);
+    border-radius:20px;
+    overflow:hidden;
+    border:2px solid rgba(255,215,0,0.3);
+    box-shadow:0 0 30px rgba(255,215,0,0.15);
+}
+
+.chat-header{
+    padding:20px;
+    background:linear-gradient(
+        90deg,
+        #17213d,
+        #22335d
+    );
+}
+
+.chat-header h2{
+    color:#FFD700;
+}
+
+.chat-header p{
+    margin-top:8px;
+    color:#ddd;
+}
+
+iframe{
+    width:100%;
+    height:750px;
+    border:none;
+    background:white;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#ccc;
+}
+
+.badge{
+    display:inline-block;
+
+    margin-top:15px;
+
+    padding:8px 16px;
+
+    background:#FFD700;
+    color:#1a1a1a;
+
+    border-radius:20px;
+
+    font-weight:bold;
+}
+
+@media (max-width:900px){
+
+.hero{
+    grid-template-columns:1fr;
+}
+
+.logo{
+    flex-direction:column;
+    text-align:center;
+}
+
+}
+
+</style>
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      #home
-        <span class="brand-symbol" aria-hidden="true">M</span>
 
-        <span class="brand-text">
-          <span class="brand-name">모디토리</span>
-          <span class="brand-subtitle">MEMORY · HISTORY · STORY</span>
-        </span>
-      </a>
+<header>
 
-      <nav class="header-nav" aria-label="주요 메뉴">
-        #home기억도서관</a>
-        #chapters역사 사건</a>
-        #game시간여행</a>
-      </nav>
+<div class="logo">
 
-      <button
-        class="header-button"
-        type="button"
-        onclick="scrollToGame()"
-      >
-        임무 시작
-      </button>
-    </div>
-  </header>
+tory.png
 
-  <main>
-    <section class="hero" id="home">
-      <div class="hero-copy">
-        <span class="eyebrow">기억도서관 신규 탐정 모집</span>
+<div class="logo-text">
+<h1>기억도서관의 시간탐정</h1>
+<p>과거의 진실을 찾아 역사를 되살리는 특별한 모험</p>
+</div>
 
-        <h1>
-          왜곡된 역사를<br />
-          <span>다시 기록하세요.</span>
-        </h1>
+</div>
 
-        <p class="hero-description">
-          역사 속 인물과 직접 대화하고, 서로 다른 증언과 기록을
-          비교해 사라진 진실을 복원하세요. 기억도서관장 토리가
-          시간의 문 앞에서 탐정님을 기다리고 있습니다.
-        </p>
+</header>
 
-        <div class="hero-actions">
-          <button
-            class="primary-button"
-            type="button"
-            onclick="scrollToGame()"
-          >
-            시간여행 시작하기
-          </button>
+<section class="hero">
 
-          #chapters
-            사건 둘러보기
-          </a>
-        </div>
+<div class="info-card">
 
-        <ul class="hero-features" aria-label="주요 게임 특징">
-          <li>
-            <span class="feature-dot" aria-hidden="true"></span>
-            AI 역사 인물 대화
-          </li>
-          <li>
-            <span class="feature-dot" aria-hidden="true"></span>
-            단서 수집과 추리
-          </li>
-          <li>
-            <span class="feature-dot" aria-hidden="true"></span>
-            역사적 사고 학습
-          </li>
-        </ul>
-      </div>
+tory.png
 
-      <div class="tory-area" aria-label="기억도서관장 토리">
-        <div class="arch-background" aria-hidden="true"></div>
+<h2>도서관장 토리</h2>
 
-        Designer.png
+<p>
+안녕하세요 탐정님!
 
-        <div class="tory-badge">
-          기억도서관장 · 토리
-        </div>
-      </div>
-    </section>
+저는 History에서 이름을 딴
+기억도서관의 도서관장
+<b>토리(Tory)</b>입니다.
+</p>
 
-    <section class="chapter-section" id="chapters">
-      <div class="section-inner">
-        <div class="section-heading">
-          <small>MEMORY ARCHIVES</small>
+<div class="story-box">
 
-          <h2>복원이 필요한 역사 사건</h2>
+<h3>📜 세계관</h3>
 
-          <p>
-            망각의 편집자가 다섯 개의 역사 기록을 바꾸었습니다.
-            하나의 사건을 선택하고 증언 속에 숨은 모순을 찾아보세요.
-          </p>
-        </div>
+<p>
+정체불명의 존재 "왜곡자"가
+역사 속 사건들을 바꾸고 있습니다.
 
-        <div class="chapter-grid">
-          <article class="chapter-card">
-            <span class="chapter-number">CHAPTER 01</span>
-            <h3>불멸의 함대가 만든 승리?</h3>
-            <p>
-              거북선 한 척과 한 명의 인물만으로 전쟁의 결과를
-              설명할 수 있을까요?
-            </p>
-            <span class="chapter-era">임진왜란 · 조선 중기</span>
-          </article>
+탐정님은 시간의 책장을 넘나들며
+세종대왕, 이순신, 유관순 등
+역사 인물들의 증언을 모아
+진실을 복원해야 합니다.
+</p>
 
-          <article class="chapter-card">
-            <span class="chapter-number">CHAPTER 02</span>
-            <h3>모두에게 불리했던 세금 개혁?</h3>
-            <p>
-              농민과 관리, 기존 이해관계자의 증언을 비교해
-              대동법의 진짜 목적을 조사하세요.
-            </p>
-            <span class="chapter-era">대동법 · 조선 후기</span>
-          </article>
+</div>
 
-          <article class="chapter-card">
-            <span class="chapter-number">CHAPTER 03</span>
-            <h3>왕의 개인적인 꿈으로 세운 성?</h3>
-            <p>
-              효심이라는 한 가지 설명 뒤에 가려진 정치, 군사,
-              도시와 기술의 목적을 찾아보세요.
-            </p>
-            <span class="chapter-era">수원 화성 · 정조 시대</span>
-          </article>
+<div class="badge">
+🕰️ 역사 학습 RPG
+</div>
 
-          <article class="chapter-card">
-            <span class="chapter-number">CHAPTER 04</span>
-            <h3>세금 하나 때문에 일어난 운동?</h3>
-            <p>
-              사건의 직접적인 계기와 오랫동안 누적된 사회적
-              배경을 구분해 보세요.
-            </p>
-            <span class="chapter-era">동학농민운동 · 1894년</span>
-          </article>
+</div>
 
-          <article class="chapter-card">
-            <span class="chapter-number">CHAPTER 05</span>
-            <h3>사라진 수많은 독립의 목소리</h3>
-            <p>
-              유명 인물 중심의 기록에서 사라진 다양한 참여자와
-              전국적인 확산 과정을 복원하세요.
-            </p>
-            <span class="chapter-era">3·1운동 · 1919년</span>
-          </article>
-        </div>
-      </div>
-    </section>
+<div class="chat-container">
 
-    <section class="game-section" id="game">
-      <div class="section-inner">
-        <div class="game-header">
-          <div class="game-title">
-            <span class="eyebrow">AI HISTORY TRPG</span>
-            <h2>기억도서관에 입장하기</h2>
-            <p>
-              토리에게 말을 걸어 탐정 계정을 만들거나,
-              기존 탐정 기록을 불러와 시간여행을 시작하세요.
-            </p>
-          </div>
+<div class="chat-header">
 
-          <div class="energy-box">
-            <strong>학습기회 안내</strong>
-            챕터를 시작할 때 1개가 사용되며,
-            무료 학습기회는 일정 시간이 지나면 회복됩니다.
-          </div>
-        </div>
+<h2>역사 탐정 임무 시작</h2>
 
-        <div class="chat-shell">
-          <div class="chat-topbar">
-            <div class="chat-agent">
-              <div class="chat-avatar" aria-hidden="true">
-                Designer.png
-              </div>
+<p>
+토리와 함께 역사 속 사건을 복원해보세요.
+</p>
 
-              <div class="chat-agent-text">
-                <strong>도서관장 토리</strong>
-                <span>기억 복원 안내 담당</span>
-              </div>
-            </div>
+</div>
 
-            <div class="status">
-              <span class="status-dot" aria-hidden="true"></span>
-              기억도서관 연결됨
-            </div>
-          </div>
+<iframe
+src="https://copilotstudio.microsoft.com/environments/Default-a5a060c4-00b2-4343-b6c9-23625439a0c0/bots/cr9fa_moditory_gQA4tY/webchat?__version__=2&enableFileAttachment=false&cliAgent=true">
+</iframe>
 
-          https://copilotstudio.microsoft.com/environments/Default-a5a060c4-00b2-4343-b6c9-23625439a0c0/bots/cr9fa_moditory_gQA4tY/webchat?__version__=2&amp;enableFileAttachment=false&amp;cliAgent=true</iframe>
-        </div>
+</div>
 
-        <div class="notice">
-          역사 속 등장인물의 대화는 학습 자료를 바탕으로 재구성된
-          표현입니다. 등장인물의 말도 하나의 관점이므로,
-          탐정노트의 다른 증언과 기록을 함께 비교해 주세요.
-        </div>
-      </div>
-    </section>
-  </main>
+</section>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div>
-        <div class="footer-title">
-          모디토리 · 기억도서관의 시간탐정
-        </div>
-        <div>
-          역사적 증언과 기록을 비교하는 AI 추리 학습 프로그램
-        </div>
-      </div>
+<footer>
+© 2026 기억도서관의 시간탐정 | Powered by Microsoft Copilot Studio
+</footer>
 
-      <div>
-        The Good Agent · 대진고등학교
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    function scrollToGame() {
-      const gameSection = document.getElementById("game");
-
-      gameSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  </script>
 </body>
 </html>
